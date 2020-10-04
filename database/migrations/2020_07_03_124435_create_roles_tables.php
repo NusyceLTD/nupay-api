@@ -17,7 +17,8 @@ class CreateRolesTables extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('slug')->unique();
-            $table->boolean('active');
+            $table->boolean('active')->default(1);
+            $table->boolean('isCoreRole')->default(false);
             $table->timestamps();
         });
     }

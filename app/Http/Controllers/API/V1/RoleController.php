@@ -16,8 +16,14 @@ class RoleController extends BaseController
      */
     public function index()
     {
-        $roles = Role::all();
-        return $this->sendResponse($roles->toArray());
+        $roles = array();
+        $rolesCollections = Role::all();
+        foreach ($rolesCollections as $rolesCollection) {
+            $rolesColAR = $rolesCollection->toArray();
+            $rolesColAR['permissions'] = $rolesCollection->permissions()->allRelatedIds();
+            array_push($roles, $rolesColAR);
+        }
+        return $this->sendResponse($roles);
     }
 
     /**
@@ -28,7 +34,7 @@ class RoleController extends BaseController
      */
     public function store(Request $request)
     {
-        $request->validate(['name' => 'required', 'slug' => 'required']);
+        $request->validate(['name' => 'required']);
         $role = Role::create($request->all());
         return $this->sendResponse($role->toArray());
     }
@@ -36,12 +42,11 @@ class RoleController extends BaseController
     /**
      * Display the specified resource.
      *
-     * @param $id
+     * @param Role $role
      * @return JsonResponse
      */
-    public function show($id)
+    public function show(Role $role)
     {
-        $role = Role::find($id);
         return $this->sendResponse($role->toArray());
     }
 
@@ -52,7 +57,7 @@ class RoleController extends BaseController
      * @param Role $role
      * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Role $role)
     {
         dd($request->all());
         $request->validate(['name' => 'required', 'slug' => 'required']);
@@ -61,16 +66,41 @@ class RoleController extends BaseController
         return $this->sendResponse($role->toArray());
     }
 
+    public function filter(Request $request)
+    {
+        $roles = array();
+
+        $rolesCollections = Role::all();
+        foreach ($rolesCollections as $rolesCollection) {
+            $rolesColAR = $rolesCollection->toArray();
+            $rolesColAR['permissions'] = $rolesCollection->permissions()->allRelatedIds();
+            array_push($roles, $rolesColAR);
+        }
+        return $this->sendResponse($roles);
+    }
+
+    public function userHasRole(Role $role)
+    {
+
+        return $this->sendResponse($role->users()->toArray());
+    }
+
     /**
      * Remove the specified resource from storage.
      *
-     * @param  $id
+     * @param Role $role
      * @return JsonResponse
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(Role $role)
     {
-        $role = Role::find($id);
         $role->delete();
-        return $this->sendResponse(array(), 'suppression avec success');
+        return $this->sendResponse(array(), 'Suppression avec success');
+    }
+
+
+    public function hisPermissions(Role $role)
+    {
+        return $this->sendResponse($role->permissions()->get()->toArray());
     }
 }

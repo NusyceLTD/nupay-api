@@ -92,5 +92,3 @@ trait HasPermissionsTrait
     }
 
 }
-
-?>

@@ -41,6 +41,7 @@ class User extends Authenticatable
     ];
 
 
+
     public function deposites()
     {
         return $this->hasMany(Deposit::class);
@@ -75,4 +76,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Merchant::class);
     }
+
+
 }
